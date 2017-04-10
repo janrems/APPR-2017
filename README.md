@@ -1,13 +1,29 @@
 # Analiza podatkov s programom R, 2016/17
 
-## Analiza revščinr in vpliv socialnih transferjev v EU
+## Analiza revščine in vpliv socialnih transferjev v EU
 Avtor: Jan Rems
 
 Repozitorij z gradivi pri predmetu APPR v študijskem letu 2016/17
 
 ## Tematika
 
-V projektu bom analiziral delež prebivalstva, na pragu revščine, pred socialnimi transferji in po njih, glede na geografsko poreklo, starost in spol. Prav tako bom analiziral vpliv socialnizh transferjev na zmanjšanje tveganja revščine. Podatke bom analiziral za obdobje od 2007 do 2015(mogoče dodam še glede na socialni status, izobrazbo...).
+V projektu bom analiziral delež prebivalstva, na pragu revščine, pred socialnimi transferji in po njih, glede na geografsko poreklo, starost in spol. Prav tako bom analiziral vpliv socialnizh transferjev na zmanjšanje tveganja revščine. Podatke bom analiziral za obdobje od 2007 do 2015. 
+
+Tabela 1 bo vsebovala države za vsako leto in naslednje stolpce:
+
+* delež socialno ogroženih pred transferji
+
+* delež socialno ogroženih po transferjih
+
+* BDP 
+
+* delež BDP-ja namenjen za socialne transferje
+
+Tabela 2 bo vsebovala države za vsa leta v stolpcih pa bo struktura ogroženega prebivalstva pred socialnimi transferji po kategoriji starosti. Stoplpci bodo starostne kategorije.
+
+Tabela 3 bo vsebovala države za vsa leta v stolpcih pa bo struktura ogroženega prebivalstva po socialnih transferjih po kategoriji starosti. Stoplpci bodo starostne kategorije.
+
+Cilj naloge je ugotoviti, v prvem planu stopnjo revščine oz. socialne ogroženosti prebivalstva različnih držav, glede na geografsko poreklo in BDP, nato pa še učinkovitost socialnih politik teh držav. Na koncu bi naredil še napoved kako se bo gibala stopnja revščine v posameznih državah in v EU v prihodnje.
 
 Podatke sem dobil na naslednjih povezavah:
 
@@ -21,7 +37,6 @@ Podatke sem dobil na naslednjih povezavah:
 
 Podatki so v CSV obliki.
 
-Izbrali si boste temo, s katero se bo vaš projekt ukvarjal. Tukaj boste napisali, kje ste dobili podatke, ter kakšen je vaš cilj.
 
 ## Program
 
