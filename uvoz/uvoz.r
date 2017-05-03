@@ -60,44 +60,85 @@ require("dplyr")
 require("readr")
 # Uvoz csv tabele iz eurostata o stopnji ogroženih pred transferji skupno starosti in spolu.pokojnine izključene.
 
-uvozi.tabelo.pred.transferji <- function(){
-  stolpci <- c("Leto","Država","Kategorija","Spol","Starost","Delež","Opombe")
-  tabela_pred_transferji <- read.csv("podatki/ilc_li10_1_Data.csv", 
-                                     header = FALSE,
-                                     skip = 1,
-                                     encoding = "Windows-1250", 
-                                     na= c("",":"))
+#uvozi.tabelo.pred.transferji <- function(){
+stolpci <- c("Leto","Država","Kategorija","Spol","Starost","Delež","Opombe")
+tabela_pred_transferji <- read_csv("podatki/ilc_li10_1_Data.csv",
+                                   col_names = c("Leto","Drzava","Kategorija","Spol","Starost","Delez","Opombe"),
+                                   locale = locale(encoding = "Windows-1250"),
+                                   skip = 1,
+                                   na= c("",":"))
+
+tabela_pred_transferji$Kategorija <- NULL
+tabela_pred_transferji$Opombe <- NULL
+
+row.has.na <- apply(tabela_pred_transferji, 1, function(x){any(is.na(x))})
+tabela_pred_transferji <- tabela_pred_transferji[!row.has.na,]
+
+izbris <- (tabela_pred_transferji$Drzava == "European Union (28 countries)" )|(tabela_pred_transferji$Spol == "Total") | (tabela_pred_transferji$Starost == "Total")
+tabela_pred_transferji <- tabela_pred_transferji[!izbris,]
+
+tabela_pred_transferji$Spol <- as.factor(tabela_pred_transferji$Spol)
+tabela_pred_transferji$Starost <- as.factor(tabela_pred_transferji$Starost)
+
+levels(tabela_pred_transferji$Spol) <- c("Zenske", "Moski")
+levels(tabela_pred_transferji$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let")
+
+#return(tabela_pred_transferji)
   
-  tabela_pred_transferji$V3 <- NULL
-  tabela_pred_transferji$V7 <- NULL
-  
-  row.has.na <- apply(tabela_pred_transferji, 1, function(x){any(is.na(x))})
-  tabela_pred_transferji <- tabela_pred_transferji[!row.has.na,]
-  
-  izbris <- tabela_pred_transferji$V2 == "European Union (28 countries)"
-  tabela_pred_transferji <- tabela_pred_transferji[!izbris,]
-  
-  izbris2 <- tabela_pred_transferji$v4 != "Total" & tabela_pred_transferji$v5 != "Total"
-  return(tabela_pred_transferji)
-  
-}  
+#}  
 
 # Funkcija uvozi tabelo po transferjih
-uvozi.tabelo.po.transferji <- function(){
-  tabela_po_transferjih <- read.csv("podatki/ilc_li02_1_Data.csv", 
-                                    header = FALSE,
-                                    skip = 1,
-                                    encoding = "Windows-1250", 
-                                    na= c("",":"))
-  tabela_po_transferjih$V8 <- NULL
-  tabela_po_transferjih$V4 <- NULL
-  tabela_po_transferjih$V3 <- NULL
-  
-  row.has.na <- apply(tabela_po_transferjih, 1, function(x){any(is.na(x))})
-  tabela_po_transferjih <- tabela_po_transferjih[!row.has.na,]
-  
-  izbris_po <- tabela_po_transferjih$V2 == "European Union (28 countries)"
-  tabela_po_transferjih <- tabela_po_transferjih[!izbris_po,]
-  
-  
-}
+#uvozi.tabelo.po.transferji <- function(){
+tabela_po_transferjih <- read_csv("podatki/ilc_li02_1_Data.csv",
+                                  col_names = c("Leto","Drzava","Kategorija","krneki","Spol","Starost","Delez","Opombe"),
+                                  locale = locale(encoding = "Windows-1250"),
+                                  skip = 1,
+                                  na= c("",":"))
+
+
+tabela_po_transferjih$Kategorija <- NULL
+tabela_po_transferjih$Opombe <- NULL
+tabela_po_transferjih$krneki <- NULL
+
+
+row.has.na <- apply(tabela_po_transferjih, 1, function(x){any(is.na(x))})
+tabela_po_transferjih <- tabela_po_transferjih[!row.has.na,]
+
+izbris_po <- (tabela_po_transferjih$Drzava == "European Union (28 countries)") |(tabela_po_transferjih$Spol == "Total") | (tabela_po_transferjih$Starost == "Total")
+tabela_po_transferjih <- tabela_po_transferjih[!izbris_po,]
+
+tabela_po_transferjih$Spol <- as.factor(tabela_po_transferjih$Spol)
+tabela_po_transferjih$Starost <- as.factor(tabela_po_transferjih$Starost)
+
+levels(tabela_po_transferjih$Spol) <- c("Zenske", "Moski")
+levels(tabela_po_transferjih$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let")
+
+#}
+
+
+#Uvoz deleža bdp namenjenega socialnim transferjem
+tabela_delez_bdp <- read_csv("podatki/spr_exp_sum_1_Data.csv",
+                                  col_names = c("Leto","Drzava","Kategorija","enota","Delez","Opombe"),
+                                  locale = locale(encoding = "Windows-1250"),
+                                  skip = 1,
+                                  na= c("",":"))
+
+
+
+
+
+#Uvoz html datotek
+
+
+
+
+
+
+
+
+
+
+
+
+
+
