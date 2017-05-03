@@ -123,13 +123,27 @@ tabela_delez_bdp <- read_csv("podatki/spr_exp_sum_1_Data.csv",
                                   skip = 1,
                                   na= c("",":"))
 
+tabela_delez_bdp$Opombe <- NULL
+total_expenditure_in_procenti <- (tabela_delez_bdp$Kategorija =="Total expenditure") & (tabela_delez_bdp$enota == "Percentage of gross domestic product (GDP)") & !grepl("^Eur.*",tabela_delez_bdp$Drzava) & (!is.na(tabela_delez_bdp$Delez)) 
+tabela_delez_bdp <- tabela_delez_bdp[total_expenditure_in_procenti,]
+
+tabela_delez_bdp$Kategorija <- NULL
+tabela_delez_bdp$enota <- NULL
+
 
 
 
 
 #Uvoz html datotek
+install.packages('xml2')
+library('xml2')
+install.packages('rvest')
+library('rvest')
 
 
+link <- "http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tec00114&plugin=1"
+strah <- html_session(link) %>% read_html()
+tabela <- 
 
 
 
