@@ -142,13 +142,25 @@ library('rvest')
 
 
 link <- "http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tec00114&plugin=1"
-strah <- html_session(link) %>% read_html()
-tabela <- 
+stran <- html_session(link) %>% read_html()
+tabela <- stran %>% 
+          
+          html_nodes(xpath="//table[@id='contenttable' ]") %>%
+          .[[1]] %>% 
+          html_table(dec = ",")
 
 
+leta <- stran %>%
+  html_nodes(xpath="//table[@id='headtable' ]") %>%
+  .[[1]]%>%
+  html_table(dec = ",")
 
+drzave <- stran %>%
+  html_nodes(xpath="//table[@id='fixtable' ]") %>%
+  .[[1]]%>%
+  html_table(dec = ",")
 
-
+colnames(tabela) <- colnames(leta)    
 
 
 
