@@ -147,23 +147,40 @@ tabela <- stran %>%
           
           html_nodes(xpath="//table[@id='contenttable' ]") %>%
           .[[1]] %>% 
-          html_table(dec = ",")
+          html_table(dec = ",", header = FALSE)
 
 
 leta <- stran %>%
   html_nodes(xpath="//table[@id='headtable' ]") %>%
   .[[1]]%>%
-  html_table(dec = ",")
+  html_table(dec = ",", header = FALSE)
 
 drzave <- stran %>%
   html_nodes(xpath="//table[@id='fixtable' ]") %>%
   .[[1]]%>%
-  html_table(dec = ",")
+  html_table(dec = ",", header = FALSE)
 
 colnames(tabela) <- colnames(leta)    
+zdruzena <- cbind(leta, drzave, tabela, deparse.level = 1)
 
 
 
+#uvoz csv datoteke o ginijevem dokumentu
+
+tabela_gini <- read_csv("podatki/ilc_di12_1_Data.csv",
+                                            col_names = c("Leto","Drzava","Kategorija","Delez","Opombe"),
+                                            locale = locale(encoding = "Windows-1250"),
+                                            skip = 1, 
+                                            na = c("",":"))
+
+tabela_gini$Kategorija <- NULL
+tabela_gini$Opombe <- NULL
+
+row.has.na <- apply(tabela_gini, 1, function(x){any(is.na(x))})
+tabela_gini <- tabela_gini[!row.has.na,]
+
+le_drzave <- !grepl("^Eur.*",tabela_gini$Drzava)
+tabela_gini <- tabela_gini[le_drzave,]
 
 
 
