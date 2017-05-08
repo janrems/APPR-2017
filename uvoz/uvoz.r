@@ -1,66 +1,19 @@
-# 2. faza: Uvoz podatkov
-
-# Funkcija, ki uvozi občine iz Wikipedije
-# uvozi.obcine <- function() {
-#   link <- "http://sl.wikipedia.org/wiki/Seznam_ob%C4%8Din_v_Sloveniji"
-#   stran <- html_session(link) %>% read_html()
-#   tabela <- stran %>% html_nodes(xpath="//table[@class='wikitable sortable']") %>%
-#     .[[1]] %>% html_table(dec = ",")
-#   colnames(tabela) <- c("obcina", "povrsina", "prebivalci", "gostota", "naselja",
-#                         "ustanovitev", "pokrajina", "regija", "odcepitev")
-#   tabela$obcina <- gsub("Slovenskih", "Slov.", tabela$obcina)
-#   tabela$obcina[tabela$obcina == "Kanal ob Soči"] <- "Kanal"
-#   tabela$obcina[tabela$obcina == "Loški potok"] <- "Loški Potok"
-#   for (col in colnames(tabela)) {
-#     tabela[tabela[[col]] == "-", col] <- NA
-#   }
-#   for (col in c("povrsina", "prebivalci", "gostota", "naselja", "ustanovitev")) {
-#     if (is.numeric(tabela[[col]])) {
-#       next()
-#     }
-#     tabela[[col]] <- gsub("[.*]", "", tabela[[col]]) %>% as.numeric()
-#   }
-#   for (col in c("obcina", "pokrajina", "regija")) {
-#     tabela[[col]] <- factor(tabela[[col]])
-#   }
-#   return(tabela)
-# }
-# 
-# # Funkcija, ki uvozi podatke iz datoteke druzine.csv
-# uvozi.druzine <- function(obcine) {
-#   data <- read_csv2("podatki/druzine.csv", col_names = c("obcina", 1:4),
-#                     locale = locale(encoding = "Windows-1250"))
-#   data$obcina <- data$obcina %>% strapplyc("^([^/]*)") %>% unlist() %>%
-#     strapplyc("([^ ]+)") %>% sapply(paste, collapse = " ") %>% unlist()
-#   data$obcina[data$obcina == "Sveti Jurij"] <- "Sveti Jurij ob Ščavnici"
-#   data <- data %>% melt(id.vars = "obcina", variable.name = "velikost.druzine",
-#                         value.name = "stevilo.druzin")
-#   data$velikost.druzine <- as.numeric(data$velikost.druzine)
-#   data$obcina <- factor(data$obcina, levels = obcine)
-#   return(data)
-# }
-# 
-# # Zapišimo podatke v razpredelnico obcine
-# obcine <- uvozi.obcine()
-# 
-# # Zapišimo podatke v razpredelnico druzine.
-# druzine <- uvozi.druzine(levels(obcine$obcina))
-
-# Če bi imeli več funkcij za uvoz in nekaterih npr. še ne bi
-# potrebovali v 3. fazi, bi bilo smiselno funkcije dati v svojo
-# datoteko, tukaj pa bi klicali tiste, ki jih potrebujemo v
-# 2. fazi. Seveda bi morali ustrezno datoteko uvoziti v prihodnjih
-# fazah.
 
 
-# JAN REMS, ANALIZA REVŠČINE
-#uvoz knjižnjic in paketov
+
+# JAN REMS, ANALIZA REV��INE
+# 2. faza - uvoz podatkov
+
+#uvoz knji�njic in paketov
+
+
 require ("xlsx")
 require("dplyr")
 require("readr")
-# Uvoz csv tabele iz eurostata o stopnji ogroženih pred transferji skupno starosti in spolu.pokojnine izključene.
 
-#uvozi.tabelo.pred.transferji <- function(){
+# Uvoz csv tabele iz eurostata o stopnji ogro�enih pred transferji skupno starosti in spolu. pokojnine izklju�ene.
+
+
 stolpci <- c("Leto","Država","Kategorija","Spol","Starost","Delež","Opombe")
 tabela_pred_transferji <- read_csv("podatki/ilc_li10_1_Data.csv",
                                    col_names = c("Leto","Drzava","Kategorija","Spol","Starost","Delez","Opombe"),
@@ -83,12 +36,12 @@ tabela_pred_transferji$Starost <- as.factor(tabela_pred_transferji$Starost)
 levels(tabela_pred_transferji$Spol) <- c("Zenske", "Moski")
 levels(tabela_pred_transferji$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let")
 
-#return(tabela_pred_transferji)
-  
-#}  
 
-# Funkcija uvozi tabelo po transferjih
-#uvozi.tabelo.po.transferji <- function(){
+  
+
+# Uvoz tabele pred transferji
+
+
 tabela_po_transferjih <- read_csv("podatki/ilc_li02_1_Data.csv",
                                   col_names = c("Leto","Drzava","Kategorija","krneki","Spol","Starost","Delez","Opombe"),
                                   locale = locale(encoding = "Windows-1250"),
@@ -113,10 +66,9 @@ tabela_po_transferjih$Starost <- as.factor(tabela_po_transferjih$Starost)
 levels(tabela_po_transferjih$Spol) <- c("Zenske", "Moski")
 levels(tabela_po_transferjih$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let")
 
-#}
 
 
-#Uvoz deleža bdp namenjenega socialnim transferjem
+#Uvoz dele�a bdp namenjenega socialnim transferjem
 tabela_delez_bdp <- read_csv("podatki/spr_exp_sum_1_Data.csv",
                                   col_names = c("Leto","Drzava","Kategorija","enota","Delez","Opombe"),
                                   locale = locale(encoding = "Windows-1250"),
@@ -135,14 +87,16 @@ tabela_delez_bdp$enota <- NULL
 
 
 #Uvoz html datotek
-install.packages('xml2')
+
 library('xml2')
-install.packages('rvest')
 library('rvest')
+library(reshape)
+library(varhandle)
 
 
 link <- "http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tec00114&plugin=1"
 stran <- html_session(link) %>% read_html()
+
 tabela <- stran %>% 
           
           html_nodes(xpath="//table[@id='contenttable' ]") %>%
@@ -153,7 +107,7 @@ tabela <- stran %>%
 leta <- stran %>%
   html_nodes(xpath="//table[@id='headtable' ]") %>%
   .[[1]]%>%
-  html_table(dec = ",", header = FALSE)
+  html_table(dec = ",")
 
 drzave <- stran %>%
   html_nodes(xpath="//table[@id='fixtable' ]") %>%
@@ -161,11 +115,35 @@ drzave <- stran %>%
   html_table(dec = ",", header = FALSE)
 
 colnames(tabela) <- colnames(leta)    
-zdruzena <- cbind(leta, drzave, tabela, deparse.level = 1)
+bdp_indeks <- cbind(drzave, tabela)
+
+
+bdp_indeks <- melt(bdp_indeks, id = "X1")
+
+colnames(bdp_indeks) <- c("Drzava", "Leto", "Indeks")
+bdp_indeks <- bdp_indeks[c( "Leto","Drzava", "Indeks")]
+
+for (col in c("Leto", "Indeks")) {
+  bdp_indeks[[col]] <- parse_number(bdp_indeks[[col]], na = ":")
+}
+
+bdp_indeks <- bdp_indeks %>% 
+  filter(bdp_indeks$Drzava != "Liechtenstein"
+        & bdp_indeks$Drzava !="Montenegro"
+        & bdp_indeks$Drzava !="Albania"
+        & bdp_indeks$Drzava !="Bosnia and Herzegovina"
+        & bdp_indeks$Drzava !="United States"
+        & bdp_indeks$Drzava !="Japan"
+        & bdp_indeks$Leto > 2006 
+        & !grepl( "^E[Uu].*", bdp_indeks$Drzava))
 
 
 
-#uvoz csv datoteke o ginijevem dokumentu
+
+
+
+
+#Uvoz csv datoteke o ginijevem dokumentu
 
 tabela_gini <- read_csv("podatki/ilc_di12_1_Data.csv",
                                             col_names = c("Leto","Drzava","Kategorija","Delez","Opombe"),
