@@ -1,17 +1,17 @@
 
 
 
-# JAN REMS, ANALIZA REVä»INE
+# JAN REMS, ANALIZA REVSCINE
 # 2. faza - uvoz podatkov
 
-#uvoz knjiénjic in paketov
+#uvoz knjiznjic in paketov
 
 
-require ("xlsx")
-require("dplyr")
-require("readr")
 
-# Uvoz csv tabele iz eurostata o stopnji ogroéenih pred transferji skupno starosti in spolu. pokojnine izkljuËene.
+library("dplyr")
+library("readr")
+
+# Uvoz csv tabele iz eurostata o stopnji ogrozenih pred transferji skupno starosti in spolu. pokojnine so izu transferjev izkljucene .
 
 
 stolpci <- c("Leto","Dr≈æava","Kategorija","Spol","Starost","Dele≈æ","Opombe")
@@ -27,19 +27,20 @@ tabela_pred_transferji$Opombe <- NULL
 row.has.na <- apply(tabela_pred_transferji, 1, function(x){any(is.na(x))})
 tabela_pred_transferji <- tabela_pred_transferji[!row.has.na,]
 
-izbris <- (tabela_pred_transferji$Drzava == "European Union (28 countries)" )|(tabela_pred_transferji$Spol == "Total") | (tabela_pred_transferji$Starost == "Total")
+izbris <- (tabela_pred_transferji$Spol != "Total" & tabela_pred_transferji$Starost != "Total") |(tabela_pred_transferji$Drzava == "European Union (28 countries)")
 tabela_pred_transferji <- tabela_pred_transferji[!izbris,]
 
 tabela_pred_transferji$Spol <- as.factor(tabela_pred_transferji$Spol)
 tabela_pred_transferji$Starost <- as.factor(tabela_pred_transferji$Starost)
+tabela_pred_transferji$Drzava <- as.factor(tabela_pred_transferji$Drzava)
 
-levels(tabela_pred_transferji$Spol) <- c("Zenske", "Moski")
-levels(tabela_pred_transferji$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let")
-
-
+levels(tabela_pred_transferji$Spol) <- c("Zenske", "Moski","Skupaj")
+levels(tabela_pred_transferji$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let","Skupaj")
+levels(tabela_pred_transferji$Drzava)[12] <- "Germany"
+levels(tabela_pred_transferji$Drzava)[10] <- "Macedonia"
   
 
-# Uvoz tabele pred transferji
+# Uvoz tabele po transferjih
 
 
 tabela_po_transferjih <- read_csv("podatki/ilc_li02_1_Data.csv",
@@ -57,18 +58,22 @@ tabela_po_transferjih$krneki <- NULL
 row.has.na <- apply(tabela_po_transferjih, 1, function(x){any(is.na(x))})
 tabela_po_transferjih <- tabela_po_transferjih[!row.has.na,]
 
-izbris_po <- (tabela_po_transferjih$Drzava == "European Union (28 countries)") |(tabela_po_transferjih$Spol == "Total") | (tabela_po_transferjih$Starost == "Total")
+izbris_po <- (tabela_po_transferjih$Spol != "Total" & tabela_po_transferjih$Starost != "Total") |(tabela_po_transferjih$Drzava == "European Union (28 countries)")
 tabela_po_transferjih <- tabela_po_transferjih[!izbris_po,]
 
 tabela_po_transferjih$Spol <- as.factor(tabela_po_transferjih$Spol)
 tabela_po_transferjih$Starost <- as.factor(tabela_po_transferjih$Starost)
+tabela_po_transferjih$Drzava <- as.factor(tabela_po_transferjih$Drzava)
 
-levels(tabela_po_transferjih$Spol) <- c("Zenske", "Moski")
-levels(tabela_po_transferjih$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let")
+levels(tabela_po_transferjih$Spol) <- c("Zenske", "Moski","Skupaj")
+levels(tabela_po_transferjih$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let","Skupaj")
+levels(tabela_po_transferjih$Drzava)[12] <- "Germany"
+levels(tabela_po_transferjih$Drzava)[10] <- "Macedonia"
 
 
 
-#Uvoz deleûa bdp namenjenega socialnim transferjem
+#Uvoz deleza bdp namenjenega socialnim transferjem
+
 tabela_delez_bdp <- read_csv("podatki/spr_exp_sum_1_Data.csv",
                                   col_names = c("Leto","Drzava","Kategorija","enota","Delez","Opombe"),
                                   locale = locale(encoding = "Windows-1250"),
@@ -82,6 +87,10 @@ tabela_delez_bdp <- tabela_delez_bdp[total_expenditure_in_procenti,]
 tabela_delez_bdp$Kategorija <- NULL
 tabela_delez_bdp$enota <- NULL
 
+tabela_delez_bdp$Drzava <- as.factor(tabela_delez_bdp$Drzava)
+levels(tabela_delez_bdp$Drzava)[11] <- "Germany"
+
+
 
 
 
@@ -90,7 +99,7 @@ tabela_delez_bdp$enota <- NULL
 
 library('xml2')
 library('rvest')
-library(reshape)
+library(reshape2)
 library(varhandle)
 
 
@@ -128,25 +137,21 @@ for (col in c("Leto", "Indeks")) {
 }
 
 bdp_indeks <- bdp_indeks %>% 
-  filter(bdp_indeks$Drzava != "Liechtenstein"
-        & bdp_indeks$Drzava !="Montenegro"
-        & bdp_indeks$Drzava !="Albania"
-        & bdp_indeks$Drzava !="Bosnia and Herzegovina"
-        & bdp_indeks$Drzava !="United States"
-        & bdp_indeks$Drzava !="Japan"
-        & bdp_indeks$Leto > 2006 
-        & !grepl( "^E[Uu].*", bdp_indeks$Drzava))
+  filter(Drzava %in% c(tabela_po_transferjih$Drzava,"Germany") 
+        & Leto > 2006 
+        & !grepl( "^E[Uu].*", Drzava))
+
+bdp_indeks$Drzava <- as.factor(bdp_indeks$Drzava)
 
 
 
 
 
 
-
-#Uvoz csv datoteke o ginijevem dokumentu
+#Uvoz csv datoteke o ginijevem koeficientu
 
 tabela_gini <- read_csv("podatki/ilc_di12_1_Data.csv",
-                                            col_names = c("Leto","Drzava","Kategorija","Delez","Opombe"),
+                                            col_names = c("Leto","Drzava","Kategorija","Koeficient","Opombe"),
                                             locale = locale(encoding = "Windows-1250"),
                                             skip = 1, 
                                             na = c("",":"))
@@ -159,6 +164,31 @@ tabela_gini <- tabela_gini[!row.has.na,]
 
 le_drzave <- !grepl("^Eur.*",tabela_gini$Drzava)
 tabela_gini <- tabela_gini[le_drzave,]
+
+tabela_gini$Drzava <- as.factor(tabela_gini$Drzava)
+
+levels(tabela_gini$Drzava)[10] <- "Macedonia"
+levels(tabela_gini$Drzava)[12] <- "Germany"
+
+# Uvoz stevila prebivalcev po letih in drzavah
+
+tabela_prebivalci <- read_csv("podatki/nama_10_pe_1_Data.csv",
+                        col_names = c("Leto","Drzava","Kategorija","Koeficient","Populacija","Opombe"),
+                        locale = locale(encoding = "Windows-1250"),
+                        skip = 1, 
+                        na = c("",":"))
+
+tabela_prebivalci$Kategorija <- NULL
+tabela_prebivalci$Koeficient <- NULL
+tabela_prebivalci$Opombe <- NULL
+
+row.has.na <- apply(tabela_prebivalci, 1, function(x){any(is.na(x))})
+tabela_prebivalci <- tabela_prebivalci[!row.has.na,]
+
+tabela_prebivalci$Drzava <- as.factor(tabela_prebivalci$Drzava)
+levels(tabela_prebivalci$Drzava)[10] <- "Macedonia"
+levels(tabela_prebivalci$Drzava)[12] <- "Germany"
+
 
 
 
