@@ -11,3 +11,15 @@ zemljevid <- pretvori.zemljevid(zemljevid)
 # Izračunamo povprečno velikost družine
 povprecja <- druzine %>% group_by(obcina) %>%
   summarise(povprecje = sum(velikost.druzine * stevilo.druzin) / sum(stevilo.druzin))
+
+
+# 3. faza: Vizualizacija podatkov
+
+#graf gibanja neenakosti v eu
+
+evro <- inner_join(tabela_pred_transferji,tabela_prebivalci) %>%
+  filter(Spol == "Skupaj"& Starost == "Skupaj") %>%
+  group_by(Leto) %>%
+  summarize(delez = sum(Delez * Populacija)/sum(Populacija))
+
+
