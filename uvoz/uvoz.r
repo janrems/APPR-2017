@@ -4,12 +4,10 @@
 # JAN REMS, ANALIZA REVSCINE
 # 2. faza - uvoz podatkov
 
-#uvoz knjiznjic in paketov
 
 
 
-library("dplyr")
-library("readr")
+
 
 # Uvoz csv tabele iz eurostata o stopnji ogrozenih pred transferji skupno starosti in spolu. pokojnine so izu transferjev izkljucene .
 
@@ -97,10 +95,6 @@ levels(tabela_delez_bdp$Drzava)[11] <- "Germany"
 
 #Uvoz html datotek
 
-library('xml2')
-library('rvest')
-library(reshape2)
-library(varhandle)
 
 
 link <- "http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tec00114&plugin=1"
