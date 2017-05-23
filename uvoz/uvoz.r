@@ -131,7 +131,7 @@ for (col in c("Leto", "Indeks")) {
 }
 
 bdp_indeks <- bdp_indeks %>% 
-  filter(Drzava %in% c(tabela_po_transferjih$Drzava,"Germany") 
+  filter(Drzava %in% tabela_po_transferjih$Drzava 
         & Leto > 2006 
         & !grepl( "^E[Uu].*", Drzava))
 
