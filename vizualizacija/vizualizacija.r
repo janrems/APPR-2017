@@ -25,6 +25,33 @@ evro <- inner_join(tabela_pred_transferji,tabela_prebivalci) %>%
   summarize(delez = sum(Delez * Populacija)/sum(Populacija))
 
 
+evro_po <- inner_join(tabela_po_transferjih,tabela_prebivalci) %>%
+  filter(Spol == "Skupaj"& Starost == "Skupaj") %>%
+  group_by(Leto) %>%
+  summarize(delez = sum(Delez * Populacija)/sum(Populacija))
+
+
+#Eu starost
+eu_starost_pred <- inner_join(tabela_pred_transferji,tabela_prebivalci) %>%
+  filter(Spol == "Skupaj"& Starost != "Skupaj") %>%
+  group_by(Leto, Starost) %>%
+  summarize(Delez = sum(Delez * Populacija)/sum(Populacija))
+
+eu_starost_pred.povp <- eu_starost_pred %>%
+  group_by(Starost) %>%
+  summarise(Delez = mean(Delez))
+
+eu_starost_po <- inner_join(tabela_po_transferjih,tabela_prebivalci) %>%
+  filter(Spol == "Skupaj"& Starost != "Skupaj") %>%
+  group_by(Leto, Starost) %>%
+  summarize(Delez = sum(Delez * Populacija)/sum(Populacija))
+
+eu_starost_po.povp <- eu_starost_po %>%
+  group_by(Starost) %>%
+  summarise(Delez = mean(Delez))
+
+
+
 
 #podatki za leto 2007
 
@@ -112,3 +139,23 @@ razlika_z <- inner_join(zenske_po %>% rename(Delez.Po = Delez), zenske_pred %>% 
 
 razlika_mz <- inner_join(razlika_m %>% rename(Delez.m = Delez), razlika_z %>% rename(Delez.z = Delez)) %>%
   transmute(Drzava, Delez = Delez.m - Delez.z)
+ralika_mz.pov <- mean(razlika_mz$Delez)
+#razlike med zmanjšanjem revnih praktično ni minimalno na strani ž. torej raje glejmo pred
+
+razlika_mz_pred <- inner_join(moski_pred %>% rename(delez.m = Delez), zenske_pred %>% rename(delez.z = Delez)) %>%
+  transmute(Drzava, Delez = delez.m -delez.z)
+  
+razlika_mz_po.pov <- mean(razlika_mz_pred$Delez)
+
+
+#starost
+
+starost_pred <- tabela_pred_transferji %>%
+  filter(Spol == "Skupaj", Starost != "Skupaj") %>%
+  group_by(Drzava, Starost) %>%
+  summarise(Povprecni_delez = mean(Delez))
+
+#gdp
+
+
+

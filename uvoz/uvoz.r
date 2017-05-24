@@ -184,6 +184,8 @@ levels(tabela_prebivalci$Drzava)[10] <- "Macedonia"
 levels(tabela_prebivalci$Drzava)[12] <- "Germany"
 
 
+grcija <- tabela_pred_transferji %>%
+  filter(Drzava == "Greece", Spol == "Skupaj", Starost == "Skupaj")
 
 
 
