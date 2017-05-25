@@ -61,7 +61,7 @@ leto7_pred <- tabela_pred_transferji %>%
   select(Drzava, Delez)
   
 povprecje_leto7_pred <- mean(leto7_pred$Delez)
-odklon_leto7_pred <- (1/length(leto7_pred)*sum((leto7_pred$Delez - povprecje_leto7_pred)^2))^0.5
+odklon_leto7_pred <- sd(leto7_pred$Delez)
 
 leto7_po <- tabela_po_transferjih %>%
   filter(Spol == "Skupaj"& Starost == "Skupaj",Leto == 2007) %>%
@@ -69,7 +69,7 @@ leto7_po <- tabela_po_transferjih %>%
   select(Drzava, Delez)
 
 povprecje_leto7_po <- mean(leto7_po$Delez)
-odklon_leto7_po <- (1/length(leto7_po)*sum((leto7_po$Delez - povprecje_leto7_po)^2))^0.5
+odklon_leto7_po <- sd(leto7_po$Delez)
 
 
 najboljsi_7 <- left_join(tabela_pred_transferji %>% rename(Delez.Pred = Delez),
@@ -120,7 +120,7 @@ leto15_pred <- tabela_pred_transferji %>%
   select(Drzava, Delez)
 
 povprecje_leto15_pred <- mean(leto15_pred$Delez)
-odklon_leto15_pred <- (1/length(leto15_pred)*sum((leto15_pred$Delez - povprecje_leto15_pred)^2))^0.5
+odklon_leto15_pred <- sd(leto15_pred$Delez)
 
 # povprečje let
 
@@ -170,8 +170,7 @@ starost_pred <- tabela_pred_transferji %>%
 
 #grafi
 
-graf_najboljsi <- najboljsi_7 %>% 
-  ggplot(aes(x = Drzava, y = Delez)) + geom_bar()
-
+graf_najboljsi <- ggplot(data = najboljsi_7) + aes(x = Drzava, y = Delez) + geom_bar(stat="identity",fill ="cornflowerblue") + geom_line()
+print(graf_najboljsi)
 
 
