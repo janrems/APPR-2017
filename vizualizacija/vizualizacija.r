@@ -72,11 +72,24 @@ povprecje_leto7_po <- mean(leto7_po$Delez)
 odklon_leto7_po <- (1/length(leto7_po)*sum((leto7_po$Delez - povprecje_leto7_po)^2))^0.5
 
 
-najboljsi <- left_join(tabela_pred_transferji %>% rename(Delez.Pred = Delez),
+najboljsi_7 <- left_join(tabela_pred_transferji %>% rename(Delez.Pred = Delez),
                        tabela_po_transferjih %>% rename(Delez.Po = Delez)) %>%
   filter(Spol == "Skupaj"& Starost == "Skupaj",Leto == 2007) %>%
   transmute(Drzava,  Delez = Delez.Pred - Delez.Po) %>%
   arrange(desc(Delez))
+
+najboljsi_13 <- left_join(tabela_pred_transferji %>% rename(Delez.Pred = Delez),
+                          tabela_po_transferjih %>% rename(Delez.Po = Delez)) %>%
+  filter(Spol == "Skupaj"& Starost == "Skupaj",Leto == 2013) %>%
+  transmute(Drzava,  Delez = Delez.Pred - Delez.Po) %>%
+  arrange(desc(Delez))
+
+razlika_najboljsi <- left_join(najboljsi_7 %>% rename(delez.7 = Delez),najboljsi_13 %>% rename(delez.13 = Delez)) %>%
+  group_by(Drzava) %>%
+  summarize(Delez = sum(delez.13, -delez.7))
+razlika_najboljsi$Delez <- round(razlika_najboljsi$Delez, digits = 2)
+
+razlika.povp <- mean(razlika_najboljsi$Delez)
 
 #dost brezveze
 # leto_7_moski_pred  <- tabela_pred_transferji %>%
@@ -155,7 +168,10 @@ starost_pred <- tabela_pred_transferji %>%
   group_by(Drzava, Starost) %>%
   summarise(Povprecni_delez = mean(Delez))
 
-#gdp
+#grafi
+
+graf_najboljsi <- najboljsi_7 %>% 
+  ggplot(aes(x = Drzava, y = Delez)) + geom_bar()
 
 
 
