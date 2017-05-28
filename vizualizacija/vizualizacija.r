@@ -74,8 +74,9 @@ odklon_leto7_po <- sd(leto7_po$Delez)
 
 najboljsi_7 <- left_join(tabela_pred_transferji %>% rename(Delez.Pred = Delez),
                        tabela_po_transferjih %>% rename(Delez.Po = Delez)) %>%
-  filter(Spol == "Skupaj"& Starost == "Skupaj",Leto == 2007) %>%
-  transmute(Drzava,  Delez = Delez.Pred - Delez.Po) %>%
+  filter(Spol == "Skupaj"& Starost == "Skupaj") %>%
+  group_by(Drzava) %>%
+  summarise(Delez = mean(Delez.Pred - Delez.Po)) %>%
   arrange(desc(Delez))
 
 najboljsi_13 <- left_join(tabela_pred_transferji %>% rename(Delez.Pred = Delez),
@@ -170,7 +171,24 @@ starost_pred <- tabela_pred_transferji %>%
 
 #grafi
 
-graf_najboljsi <- ggplot(data = najboljsi_7) + aes(x = Drzava, y = Delez) + geom_bar(stat="identity",fill ="cornflowerblue") + geom_line()
+graf_najboljsi <- ggplot(data = najboljsi_7) + aes(x = Drzava, y = Delez) + geom_bar(stat="identity",fill ="cornflowerblue") + geom_line()+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 print(graf_najboljsi)
 
 
+odnosi <- inner_join(tabela_pred_transferji, tabela_gini) %>% 
+  inner_join(bdp_indeks) %>%
+  group_by(Drzava) %>%
+  summarise(Delez = round(mean(Delez),1), Koeficient = round(mean(Koeficient),1), Indeks = round(mean(Indeks),1))
+
+graf_odnosi <- ggplot() + 
+  geom_point(data=odnosi, mapping=aes(x=Koeficient, y= Delez, size= Indeks), colour = 'red4', fill = 'white')
+print(graf_odnosi)
+  
+  
+  
+  
+spremembe <- tabela_pred_transferji %>%
+  filter(Starost == "Skupaj", Spol == "Skupaj")
+  
+  
+  
