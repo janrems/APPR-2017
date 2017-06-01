@@ -171,7 +171,8 @@ starost_pred <- tabela_pred_transferji %>%
 
 #grafi
 
-graf_najboljsi <- ggplot(data = najboljsi_7) + aes(x = Drzava, y = Delez) + geom_bar(stat="identity",fill ="cornflowerblue") + geom_line()+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+graf_najboljsi <- ggplot(data = najboljsi_7) + aes(x = Drzava, y = Delez) + geom_bar(stat="identity",fill ="cornflowerblue") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+graf_najboljsi <- graf_najboljsi + xlab("Drzava") + ylab("Razlika delezov") +ggtitle("Zmanjsanje deleza socialno ogrozenih preko socialnih transferjev")
 print(graf_najboljsi)
 
 
@@ -181,7 +182,7 @@ odnosi <- inner_join(tabela_pred_transferji, tabela_gini) %>%
   summarise(Delez = round(mean(Delez),1), Koeficient = round(mean(Koeficient),1), Indeks = round(mean(Indeks),1))
 
 graf_odnosi <- ggplot() + 
-  geom_point(data=odnosi, mapping=aes(x=Koeficient, y= Delez, size= Indeks), colour = 'red4', fill = 'white')
+  geom_point(data=odnosi, mapping=aes(x = Koeficient, y = Delez, size = Indeks), colour = 'red4', fill = 'white')
 print(graf_odnosi)
   
   
@@ -190,5 +191,22 @@ print(graf_odnosi)
 spremembe <- tabela_pred_transferji %>%
   filter(Starost == "Skupaj", Spol == "Skupaj")
   
+
+
+skupaj_pred <- rbind(moski_pred %>% mutate(Spol = "M"),
+                     zenske_pred %>% mutate(Spol = "Z"))
+
+primerjava <- inner_join(moski_pred,zenske_pred)
   
-  
+graf_spol <- skupaj_pred %>%
+  ggplot(aes(x = Drzava, y = Delez, fill = Spol)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+graf_spol <- graf_spol + xlab("Drzava") + ylab("Delez socialno ogroženih pred transferji") +ggtitle("Razlika med socialno ogroženostjo moskih in zensk pred transferji")
+print(graf_spol)
+
+povprecje_spol <- skupaj_pred %>%
+  group_by(Spol) %>%
+  summarise(Razlika = mean(Delez))
+
+irska <- 
