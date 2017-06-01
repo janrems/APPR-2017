@@ -13,6 +13,38 @@ povprecja <- druzine %>% group_by(obcina) %>%
   summarise(povprecje = sum(velikost.druzine * stevilo.druzin) / sum(stevilo.druzin))
 
 
+#pred teansferi povprecna
+pred_for_map <- tabela_pred_transferji %>%
+  filter(Spol == "Skupaj", Starost == "Skupaj") %>%
+  group_by(Drzava) %>%
+  summarise(Delez = mean(Delez))
+
+
+library(rworldmap)
+library(maps)
+
+
+evropa <- uvozi.zemljevid("http://ec.europa.eu/eurostat/cache/GISCO/geodatafiles/CNTR_2014_03M_SH.zip",
+                          "CNTR_2014_03M_SH/Data/CNTR_RG_03M_2014", encoding = "Windows-1250") %>% pretvori.zemljevid()
+
+tmp <- left_join(evropa, pred_for_map, by = c("CNTR_ID" = "CNTR"))
+
+tmp2 <- tmp %>% group_by(CNTR_ID, St_pojavitev) %>% summarise(x = mean(long), y = mean(lat))
+
+zem_e <-ggplot() +
+  geom_polygon(data = pred_for_map, aes(x = long, y = lat, group = group, fill = Delez)) +
+  geom_text(data = pred_for_map, aes(x = x, y = y, label = Delez), size = 5)
+
+  
+
+
+
+
+
+
+
+
+
 # 3. faza: Vizualizacija podatkov
 
 #iskanje ustreznih podatkov
@@ -209,4 +241,10 @@ povprecje_spol <- skupaj_pred %>%
   group_by(Spol) %>%
   summarise(Razlika = mean(Delez))
 
-irska <- 
+irska <- left_join(tabela_pred_transferji %>% rename(delez.pred = Delez), tabela_po_transferjih %>% rename(delez.po = Delez)) %>%
+  filter(Drzava == "Ireland", Spol == "Skupaj", Starost == "Skupaj") %>%
+  transmute(Leto, Drzava, delez.pred, delez.po, razlika = delez.pred - delez.po)
+
+  
+  grcija <- tabela_pred_transferji %>%
+  filter(Drzava == "Greece", Spol == "Skupaj", Starost == "Skupaj")

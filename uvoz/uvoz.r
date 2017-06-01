@@ -188,4 +188,15 @@ grcija <- tabela_pred_transferji %>%
   filter(Drzava == "Greece", Spol == "Skupaj", Starost == "Skupaj")
 
 
+#Uvoz tabele za ID drzav
+
+link2 <- "https://en.wikipedia.org/wiki/ISO_3166-1"
+stran2 <- html_session(link) %>% read_html()
+
+tabela_id <- stran2 %>% 
+  html_nodes(xpath="//table[@class='wikitable sortable']") %>%
+  .[[3]] %>% 
+    html_table(dec = ",", header = FALSE)
+
+
 
