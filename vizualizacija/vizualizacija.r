@@ -19,6 +19,7 @@ pred_for_map <- tabela_pred_transferji %>%
   group_by(Drzava) %>%
   summarise(Delez = mean(Delez))
 
+pred_for_map <- inner_join(pred_for_map, tabela_id)
 
 library(rworldmap)
 library(maps)
@@ -27,12 +28,14 @@ library(maps)
 evropa <- uvozi.zemljevid("http://ec.europa.eu/eurostat/cache/GISCO/geodatafiles/CNTR_2014_03M_SH.zip",
                           "CNTR_2014_03M_SH/Data/CNTR_RG_03M_2014", encoding = "Windows-1250") %>% pretvori.zemljevid()
 
-tmp <- left_join(evropa, pred_for_map, by = c("CNTR_ID" = "CNTR"))
+write.table(evropa,file="Zemljevid_evrope")
 
-tmp2 <- tmp %>% group_by(CNTR_ID, St_pojavitev) %>% summarise(x = mean(long), y = mean(lat))
+pred_for_map1 <- left_join(evropa, pred_for_map, by = c("CNTR_ID" = "ID"))
+
+pred_for_map2 <- pred_for_map1 %>% group_by(CNTR_ID, Delez) %>% summarise(x = mean(long), y = mean(lat))
 
 zem_e <-ggplot() +
-  geom_polygon(data = pred_for_map, aes(x = long, y = lat, group = group, fill = Delez)) +
+  geom_polygon(data = pred_for_map2, aes(x = long, y = lat, group = group, fill = Delez)) +
   geom_text(data = pred_for_map, aes(x = x, y = y, label = Delez), size = 5)
 
   
