@@ -191,12 +191,14 @@ grcija <- tabela_pred_transferji %>%
 #Uvoz tabele za ID drzav
 
 link2 <- "https://en.wikipedia.org/wiki/ISO_3166-1"
-stran2 <- html_session(link) %>% read_html()
+stran2 <- html_session(link2) %>% read_html()
 
 tabela_id <- stran2 %>% 
   html_nodes(xpath="//table[@class='wikitable sortable']") %>%
-  .[[3]] %>% 
-    html_table(dec = ",", header = FALSE)
+  .[[2]] %>% 
+    html_table(dec = ",")
 
+tabela_id <- tabela_id[,-c(3:6)]
+colnames(tabela_id) <- c("Drzava", "ID")
 
 
