@@ -10,7 +10,7 @@ output:
 runtime: shiny
 ---
 
-```{r setup, echo=FALSE, results='hide', message=FALSE}
+```{r setup, echo=FALSE, results='hide', message=FALSE, include=FALSE}
 # Če želimo nastaviti pisave v PDF-ju, odkomentiramo
 # in sledimo navodilom v programu.
 #source("fontconfig.r", encoding = "UTF-8")
@@ -31,7 +31,7 @@ V zadnji fazi bom naredil še ...
 
 # Obdelava, uvoz in čiščenje podatkov
 
-```{r uvoz, echo=FALSE, message=FALSE}
+```{r uvoz, echo=FALSE, message=FALSE, include=FALSE}
 source("uvoz/uvoz.r", encoding = "UTF-8")
 ```
 
@@ -71,11 +71,12 @@ Tabela 5: Ginijev koeficient (merilo neenakomerne porazdelitve dohodka in premo�
 * 2. stolpec: Drzava, imenska spremenljivka
 * 3. stolpec: Koeficient(ginijev koeficient), številska spremenljivka
 
-Tabela 6: Število prebivalcev države v dotičnem letu
 
-* 1. stolpec: Leto (2007-2015), številska spremenljivka
-* 2. stolpec: Drzava, imenska spremenljivka
-* 3. stolpec: Populacija (v tisočih), številska spremenljivka
+Tabela 7: ISO koda za države iz mojih tabel
+
+* 1. stolpec: Drzava, imenska spremenljivka
+* 2. stolpec: ISO koda
+
 
 
 
@@ -89,13 +90,62 @@ Podatke sem našel na straneh :
 
 - <http://ec.europa.eu/eurostat/web/products-datasets/-/tps00102>
 
+- <https://en.wikipedia.org/wiki/ISO_3166-1>
 
-```{r razpredelnice}
+
+```{r razpredelnice1,message=FALSE, echo=FALSE}
 kable(head(tabela_pred_transferji), caption = "Delez socialno ogroženih pred transferji")
 
 kable(head(tabela_gini), caption = "Ginijev koeficient")
 
 ```
+
+# Vizualizacija
+
+```{r vizualizacija, echo=FALSE,results='hide', message=FALSE, include=FALSE}
+source("vizualizacija/vizualizacija.r", encoding = "UTF-8")
+```
+
+Tretjo fazo projekta sem začel z hitro analizo, da bi dobil boljši pregled nad zbranimi podatki. Najprej sem si pogledal povprečni delež socialno ogroženih pred in po transferjih, tekom let za celotno evropo. Pri tem sem si pomagal s številom prebivalcev držav, da sem dobil tehtano povprečje za celotno Evropo. Ugotovil sem, da se delež tekom let ni kaj prida spremenil. Tako je bilo  povprečje socialno ogroženih v Evropi pred socialnimi transferji skozi leta 25,9%, po le-teh pa 16,7%. 
+
+Nato sem se posvetil analizi starostne stukture socialno ogroženih. Ponovno sem podatke analiziral za celotno Evropo in prišel do naslednjih spoznanj :
+
+```{r razpredelnice2,message=FALSE, echo=FALSE}
+kable(head(starost_zdruzeni), caption = "Starostna struktura socialno ogorženih v Evropi")
+
+```
+
+Odkril sem, da je delež izpostavljenih žensk v povprečju za približno 1,5% višji, gledano pred socialnimi transferji. Z nadaljno analizo sem ugotovi, da so transferji približno enako učinkoviti za oba spola, zato sem skonstruiral graf, ki prikazuje le delež socialno ogroženih pred transferji, ločeno po spolih, kjer sem vzel povprečje vseh let. 
+
+```{r graf_spol, echo=FALSE, message=FALSE, fig.align='center'}
+print(graf_spol) 
+
+```
+
+Sedaj pa si poglejmo še, kakšna je socialna ogroženost pred socialnimi transferji v različnih evropskih državah. To bomo najbolj pregledno videli na zemljevidu :
+
+```{r zemljevid, echo=FALSE, message=FALSE, fig.align='center'}
+print(zem_e) 
+
+```
+
+Že ob hitrem pogledu na zemljevid opazimo izstopanje Irske. Zato sem se odločil, da se ji bom posebej posvetil in izdelal naslednji graf :
+
+```{r graf_irska, echo=FALSE, message=FALSE, fig.align='center'}
+print(graf_irska) 
+
+```
+
+Kot je znano, je Irsko finančna kriza leta 2009 močno prizadela. To je botrovalo temu, da je socialna ogroženost med leti 2009 in 2011 še dodatno zrasla in dosegla skorajda 40%, kar je za približno 15% več od evropskega povprečja. Se pa je z dvigom revščine, povečala tudi učinkovitost socialnih transferjev, tako da je delež socialno ogroženih po le-teh, tekom let ostal sorazmeroma nespremenjen in nekoliko pod evropskim povprečjem.
+
+Za konec, pa si v spodnjem grafu poglejmo še, kako se pri zmanjševanju socialne ogroženosti svojih prebivalcev odrežejo druge države :
+
+```{r graf_najboljsi, echo=FALSE, message=FALSE, fig.align='center'}
+print(graf_najboljsi) 
+
+```
+
+Sedaj ko sem orisal situacijo socialne ogrozenosti v Evropi glede na kategorije spola in starosti po različnih državahV, pa bom v naslednji fazi napredne analize podatkov, poizkušal odkriti kakšne so, če obstajajo, korelacije med revščino in kategorijami, kot so BDP, ginijev koeficient itd. 
 
 <!-- Slika \ref{fig:histogram} prikazuje porazdelitev števila naselij v občinah. -->
 
