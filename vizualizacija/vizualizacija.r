@@ -25,20 +25,24 @@ library(rworldmap)
 library(maps)
 
 
-evropa <- uvozi.zemljevid("http://ec.europa.eu/eurostat/cache/GISCO/geodatafiles/CNTR_2014_03M_SH.zip",
-                          "CNTR_2014_03M_SH/Data/CNTR_RG_03M_2014", encoding = "Windows-1250") %>% pretvori.zemljevid()
+evropa <- uvozi.zemljevid("http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/50m/cultural/ne_50m_admin_0_countries.zip",
+                          "ne_50m_admin_0_countries", encoding = "UTF-8") %>%
+  pretvori.zemljevid() %>% filter(continent == "Europe" | sovereignt %in% c("Turkey", "Cyprus") & sovereignt != "Russia",
+                                  long > -30)
 
-write.table(evropa,file="Zemljevid_evrope")
 
-pred_for_map1 <- left_join(evropa, pred_for_map, by = c("CNTR_ID" = "ID"))
 
-pred_for_map2 <- pred_for_map1 %>% group_by(CNTR_ID, Delez) %>% summarise(x = mean(long), y = mean(lat))
+pred_for_map1 <- left_join(evropa, pred_for_map, by = c("iso_a2" = "ID"))
+
+
 
 zem_e <-ggplot() +
-  geom_polygon(data = pred_for_map2, aes(x = long, y = lat, group = group, fill = Delez)) +
-  geom_text(data = pred_for_map, aes(x = x, y = y, label = Delez), size = 5)
-
+  geom_polygon(data = pred_for_map1, aes(x = long, y = lat, group = group, fill = Delez)) +
+  coord_map(xlim = c(-25,40), ylim = c(32,72))
   
+
+print(zem_e)
+
 
 
 

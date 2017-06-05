@@ -201,5 +201,7 @@ tabela_id <- stran2 %>%
 tabela_id <- tabela_id[,-c(3:6)]
 colnames(tabela_id) <- c("Drzava", "ID")
 tabela_id <- tabela_id %>%
-  filter(Drzava %in% tabela_pred_transferji$Drzava)
-
+  filter(Drzava %in% tabela_pred_transferji$Drzava
+         | Drzava %in% c("Czechia", "United Kingdom of Great Britain and Northern Ireland"))
+tabela_id$Drzava <- gsub("Czechia", "Czech Republic",tabela_id$Drzava)
+tabela_id$Drzava <- gsub("United Kingdom of Great Britain and Northern Ireland", "United Kingdom",tabela_id$Drzava)
