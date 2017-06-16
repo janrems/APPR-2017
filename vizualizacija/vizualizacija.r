@@ -172,7 +172,10 @@ graf_irska <- ggplot(data = irska, aes(x = Leto, y = Delez, fill = Kategorija)) 
 graf_irska <- graf_irska + xlab("Leto") + 
   ylab("Delez") +
   ggtitle("Socialna ogroženost in uspešnost socialne politike na Irskem med leti 2007-2015")
-  
+
+irska.po.povp <- tabela_po_transferjih %>%
+  filter(Starost == "Skupaj", Spol == "Skupaj", Drzava == "Ireland") %>%
+  summarise(mean(Delez))
 #Zemljevid socialne ogrozenosti pred transferji po drzavah
 
 pred_for_map <- inner_join(drzave_pred, tabela_id)
