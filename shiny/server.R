@@ -1,24 +1,40 @@
 library(shiny)
+source("../analiza/analiza.r")
 
 shinyServer(function(input, output) {
-  output$druzine <- DT::renderDataTable({
-    dcast(druzine, obcina ~ velikost.druzine, value.var = "stevilo.druzin") %>%
-      rename(`Občina` = obcina)
+  
+  output$Graf <- renderPlot({
+  
+    kategorija <- switch(input$var1, 
+                         "Pred" = 0,
+                         "Po" = 1)
+    
+    faktor <- switch(input$var2,
+                     "Ginijev koeficient" = 1,
+                     "Indeks BDP na prebivalca" = 2,
+                     "Delež BDP-ja namenjen socialnim transferjem" = 3)
+    
+    y_os <- switch(input$var1,
+                   "Pred" = "Delež socialno ogorženih pred transferji",
+                   "Po" = "Delež socialno ogroženih po transferjih")
+    
+    
+    graf <- grafi[[faktor + 3*kategorija]]
+    graf <- graf + xlab(input$var2) + ylab(y_os)
+    
+    print(graf)
+                     
   })
   
-  output$pokrajine <- renderUI(
-    selectInput("pokrajina", label="Izberi pokrajino",
-                choices=c("Vse", levels(obcine$pokrajina)))
-  )
-  output$naselja <- renderPlot({
-    main <- "Pogostost števila naselij"
-    if (!is.null(input$pokrajina) && input$pokrajina %in% levels(obcine$pokrajina)) {
-      t <- obcine %>% filter(pokrajina == input$pokrajina)
-      main <- paste(main, "v regiji", input$pokrajina)
-    } else {
-      t <- obcine
-    }
-    ggplot(t, aes(x = naselja)) + geom_histogram() +
-      ggtitle(main) + xlab("Število naselij") + ylab("Število občin")
+  output$tabela <- renderText({
+    kategorija <- switch(input$var1, 
+                         "Pred" = 0,
+                         "Po" = 1)
+    
+    faktor <- switch(input$var2,
+                     "Ginijev koeficient" = 1,
+                     "Indeks BDP na prebivalca" = 2,
+                     "Delež BDP-ja namenjen socialnim transferjem" = 3)
+    paste("Vsota kvadratov residualov je",matrika_odnosov$Residual[[faktor + 3*kategorija]]," ")
   })
 })
