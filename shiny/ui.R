@@ -1,4 +1,3 @@
-library(shiny)
 
 shinyUI(fluidPage(
   
@@ -12,12 +11,15 @@ shinyUI(fluidPage(
                   choices = c("Pred", "Po")),
       
       selectInput("var2", "Izberi faktor odvisnosti",
-                  choices = c("Ginijev koeficient", "Indeks BDP na prebivalca", "Delež BDP-ja namenjen socialnim transferjem"))
+                  choices = c("Ginijev koeficient" = "Koeficient", "Indeks BDP na prebivalca" = "Indeks", "Delež BDP-ja namenjen socialnim transferjem" = "Delez_bdp"))
     ),
                mainPanel(h3("Graf"),
                          plotOutput("Graf"),
                          h3("Odstopanje od regresijske funcije"),
-                         textOutput("tabela"))
+                         textOutput("tabela"),
+                         h3("Korelacija"),
+                         textOutput("kor"))
+    
     
     )
 ))

@@ -21,11 +21,10 @@ source("lib/libraries.r", encoding = "UTF-8")
 
 # Izbira teme
 
-V projektu bom analiziral delež prebivalstva, na pragu revščine, pred socialnimi transferji in po njih, glede na geografsko poreklo, starost in spol. Prav tako bom analiziral vpliv socialnih transferjev na zmanjšanje tveganja revščine. Podatke bom analiziral za obdobje od 2007 do 2015. Kot kandidateza možne dejavnike bom proučil, indeks BDP na prebivalca upoštevajoč kupno moč, delež BDP-ja namenjenega socialnim transferjem in pa ginijev koeficent.
+V projektu bom analiziral delež prebivalstva, na pragu revščine, pred socialnimi transferji in po njih, glede na geografsko poreklo, starost in spol. Prav tako bom analiziral vpliv socialnih transferjev na zmanjšanje tveganja revščine. Podatke bom analiziral za obdobje od 2007 do 2015. Kot kandidate za možne dejavnike bom proučil, indeks BDP na prebivalca upoštevajoč kupno moč, delež BDP-ja namenjenega socialnim transferjem in pa Ginijev koeficent.
 
-Tekom naloge bom poizkušal poiskati čim močnejše korelacije med dejavniki in katgorijami ter  ugotovitve vizualiziral. 
+Tekom naloge bom poizkušal poiskati čim močnejše korelacije med dejavniki in katgorijami ter ugotovitve vizualiziral. 
 
-V zadnji fazi bom naredil še ...
 
 ***
 
@@ -35,7 +34,7 @@ V zadnji fazi bom naredil še ...
 source("uvoz/uvoz.r", encoding = "UTF-8")
 ```
 
-Podatke sem uvozil iz spletne strani Eurostat iz več tabel. Večina jih je bila v csv formatu ena (indeks BDP na prebivalca upoštevajoč kupno moč) pa v html. Po preureditvi v tidy-data sem podatke, ki jih bom uporabljal pri analizi, shranil v naslednjih tabelah.
+Podatke sem uvozil iz spletne strani Eurostat iz več tabel. Večina jih je bila v csv formatu ena (indeks BDP na prebivalca upoštevajoč kupno moč) pa v html. Poleg tega sem uvozil še eno html tabelo iz Wikipedie. Po preureditvi v tidy-data sem podatke, ki jih bom uporabljal pri analizi, shranil v naslednjih tabelah.
 
 Tabela 1: Deleža socialno ogroženih pred socialnimi transferji (pokojnine so iz transferjev izključene):
 
@@ -45,10 +44,10 @@ Tabela 1: Deleža socialno ogroženih pred socialnimi transferji (pokojnine so i
 * 4. stolpec: Starost (pod 18 let, od 18 do 64 let, nad 65 let), imenska spremenljivka
 * 5. stolpec: Delež (odstotek socialno ogroženih pred transferji), številska spremenljivka
 
-Tabela 2:  Deleža socialno ogroženih po socialnih transferjih:
+Tabela 2:  Delež socialno ogroženih po socialnih transferjih:
 
 * 1. stolpec: Leto (2007-2015), številska spremenljivka
-* 2. stolpec: DrŽava, imenska spremenljivka
+* 2. stolpec: Država, imenska spremenljivka
 * 3. stolpec: Spol (Moški, Ženska), imenska spremenljivka
 * 4. stolpec: Starost (pod 18 let, od 18 do 64 let, nad 65 let), imenska spremenljivka
 * 5. stolpec: Delež (odstotek socialno ogroženih po transferjih), številska spremenljivka
@@ -56,25 +55,25 @@ Tabela 2:  Deleža socialno ogroženih po socialnih transferjih:
 Tabela 3: Delež BDP-ja namenjen socialnim transferjem:
 
 * 1. stolpec: Leto (2007-2015), številska spremenljivka
-* 2. stolpec: Drzava, imenska spremenljivka
+* 2. stolpec: Država, imenska spremenljivka
 * 3. stolpec: Delež (odstotek BDP-ja namenjen socialnim transferjem), številska spremenljivka
 
 Tabela 4: indeks BDP na prebivalca upoštevajoč kupno moč (kot osnova za indeks je BDP na prebivalca EU28):
 
 * 1. stolpec: Leto (2007-2015), številska spremenljivka
-* 2. stolpec: Drzava, imenska spremenljivka
-* 3. stolpec: Indeks(indeks BDP na prebivalca upoštevajoč kupno moč), številska spremenljivka
+* 2. stolpec: Država, imenska spremenljivka
+* 3. stolpec: Indeks (indeks BDP na prebivalca upoštevajoč kupno moč), številska spremenljivka
 
 Tabela 5: Ginijev koeficient (merilo neenakomerne porazdelitve dohodka in premoženja):
 
 * 1. stolpec: Leto (2007-2015), številska spremenljivka
-* 2. stolpec: Drzava, imenska spremenljivka
-* 3. stolpec: Koeficient(ginijev koeficient), številska spremenljivka
+* 2. stolpec: Država, imenska spremenljivka
+* 3. stolpec: Koeficient (Ginijev koeficient), številska spremenljivka
 
 
 Tabela 7: ISO koda za države iz mojih tabel
 
-* 1. stolpec: Drzava, imenska spremenljivka
+* 1. stolpec: Država, imenska spremenljivka
 * 2. stolpec: ISO koda
 
 
@@ -94,11 +93,14 @@ Podatke sem našel na straneh :
 
 
 ```{r razpredelnice1,message=FALSE, echo=FALSE}
-kable(head(tabela_pred_transferji), caption = "Delez socialno ogroženih pred transferji")
+colnames(tabela_pred_transferji)[c(2,5)] = c("Država", "Delež")
+kable(head(tabela_pred_transferji), caption = "Delež socialno ogroženih pred transferji")
 
 kable(head(tabela_gini), caption = "Ginijev koeficient")
 
 ```
+
+***
 
 # Vizualizacija
 
@@ -106,9 +108,9 @@ kable(head(tabela_gini), caption = "Ginijev koeficient")
 source("vizualizacija/vizualizacija.r", encoding = "UTF-8")
 ```
 
-Tretjo fazo projekta sem začel z hitro analizo, da bi dobil boljši pregled nad zbranimi podatki. Najprej sem si pogledal povprečni delež socialno ogroženih pred in po transferjih, tekom let za celotno evropo. Pri tem sem si pomagal s številom prebivalcev držav, da sem dobil tehtano povprečje za celotno Evropo. Ugotovil sem, da se delež tekom let ni kaj prida spremenil. Tako je bilo  povprečje socialno ogroženih v Evropi pred socialnimi transferji skozi leta 25,9%, po le-teh pa 16,7%. 
+Tretjo fazo projekta sem začel z hitro analizo, da bi dobil boljši pregled nad zbranimi podatki. Najprej sem si pogledal povprečni delež socialno ogroženih pred in po transferjih, tekom let za celotno Evropo. Pri tem sem si pomagal s številom prebivalcev držav, da sem dobil tehtano povprečje. Ugotovil sem, da se delež tekom let ni kaj prida spremenil. Tako je bilo  povprečje socialno ogroženih v Evropi pred socialnimi transferji skozi leta 25,9%, po le-teh pa 16,7%. 
 
-Nato sem se posvetil analizi starostne stukture socialno ogroženih. Ponovno sem podatke analiziral za celotno Evropo in prišel do naslednjih spoznanj :
+Nato sem se posvetil analizi starostne stukture socialno ogroženih. Ponovno sem podatke analiziral za celotno Evropo in prišel do naslednjih spoznanj:
 
 ```{r razpredelnice2,message=FALSE, echo=FALSE}
 kable(head(starost_zdruzeni), caption = "Starostna struktura socialno ogorženih v Evropi")
@@ -124,8 +126,8 @@ print(graf_spol)
 
 Sedaj pa si poglejmo še, kakšna je socialna ogroženost pred socialnimi transferji v različnih evropskih državah. To bomo najbolj pregledno videli na zemljevidu :
 
-```{r zemljevid, echo=FALSE, message=FALSE, fig.align='center'}
-print(zem_e) 
+```{r zemljevid1, echo=FALSE, message=FALSE, fig.align='center'}
+print(zem_e + guides(fill=guide_legend(title="Delež")) + ggtitle("Zemljevid deleža socialno ogroženih pred transferji  evropskih držav")) 
 
 ```
 
@@ -138,12 +140,58 @@ print(graf_irska)
 
 Kot je znano, je Irsko finančna kriza leta 2009 močno prizadela. To je botrovalo temu, da je socialna ogroženost med leti 2009 in 2011 še dodatno zrasla in dosegla skorajda 40%, kar je za približno 15% več od evropskega povprečja. Se pa je z dvigom revščine, povečala tudi učinkovitost socialnih transferjev, tako da je delež socialno ogroženih po le-teh, tekom let ostal sorazmeroma nespremenjen in nekoliko pod evropskim povprečjem.
 
-Za konec, pa si v spodnjem grafu poglejmo še, kako se pri zmanjševanju socialne ogroženosti svojih prebivalcev odrežejo druge države :
+Za konec, pa si v spodnjem grafu poglejmo še, kako se pri zmanjševanju socialne ogroženosti svojih prebivalcev odrežejo druge države in kakšno je stanje v Evropi po socialnih transferjih :
 
 ```{r graf_najboljsi, echo=FALSE, message=FALSE, fig.align='center'}
 print(graf_najboljsi) 
 
 ```
+<br>
+<br>
+```{r zemljevid2, echo=FALSE, message=FALSE, fig.align='center'}
+print(zem_e_po + guides(fill=guide_legend(title="Delež")) + ggtitle("Zemljevid deleža socialno ogroženih po transferjih evropskih držav")) 
 
-Sedaj ko sem orisal situacijo socialne ogrozenosti v Evropi glede na kategorije spola in starosti po različnih državahV, pa bom v naslednji fazi napredne analize podatkov, poizkušal odkriti kakšne so, če obstajajo, korelacije med revščino in kategorijami, kot so BDP, ginijev koeficient itd. 
+```
+
+Sedaj ko sem orisal situacijo socialne ogroženosti v Evropi glede na kategorije spola in starosti po različnih državahV, pa bom v naslednji fazi napredne analize podatkov, poizkušal odkriti kakšne so, če obstajajo, korelacije med revščino in kategorijami, kot so BDP na prebivalca, Ginijev koeficient itd. 
+
+***
+
+# Napredna analiza
+
+```{r analiza, echo=FALSE,results='hide', message=FALSE, include=FALSE}
+source("analiza/analiza.r", encoding = "UTF-8")
+```
+
+Pri naprednejši analizi podatkov sem se odločil analizirati odvisnost socialne ogroženosti, tako pred, kot po transferjih, v odvisnosti od naslednjih dejavnikov:
+
+* Ginijev koeficient, ki meri enakomernost porazdelitve bogstva v določeni državi in zavzame vrednosti med 0 in 1, pričemer nižja vrednost pomeni večjo enakost
+* Indeks BDP na prebivalca, ki upošteva kupno moč držav in ima za osnovo evropski BDP (indeks za evropo je torej 100)
+* Delež BDP-ja namenjen socialnim transferjem
+
+Odvisnost zgoraj omenjenih dejavnikov s socialno ogroženostjo sem se odločil upodobiti na grafu, zraven pa sem določil še funkcijsko povezavo med podatki, odstopanja od le-te in korealcijski koeficent.
+
+```{r shiny, echo = FALSE}
+    shinyAppDir("shiny", options=list(width="100%", height=600))
+```
+
+<br>
+<br>
+
+Tekom analize sem prišel do sklepa, da je delez socialno ogorženih v določeni državi, tako pred, kot tudi po socialnih transferjih, najbolj odvisen od Ginijevega koeficienta. Sploh v povezavi z ogroženostjo po transferjih, kjer je korelacijski koeficient blizu 1. Na sploh so odvisnosti večje, če vzamemo podatke o ogorženosti po socialnih transferjih, torej glavnih dejavnikov za primarno količino ogroženih, se pravi pred transferji, nisem uspel identificirati. Nekoliko, me je presenetila relativno nizka odvisnost deleža ogroženih po transferjih in pa deleža BDP-ja namenjenega le-tem, saj sem pred analizo intuitivno mislil, da sta ravno ta dejavnika natesneje povezana. Poleg tega pa sem ugotovil še, da je dvisnost socialne ogroženosti oz. če želite socialne varnosti, od BDP-ja na prebivalca je, zmerna, a še daleč ne tako pomembna, kot bi nekateri radi prikazali.
+
+***
+
+#Zaključek
+
+Tekom projekta, sem pridobil veliko novih informacij glede socialne ogroženosti v Evropi. Najbolj so me presentili podatki, da so najbolj ogrožena skupina mladi in pa visok delež ogroženih na Irskem. Prav tako, sem pričakoval nižjo stopnjo ogorženosti pred transferji, a hkrati tudi manjšo uspešnost držav pri zniževanju deleža ogroženih. Med drugim sem ugotovil, da se podatki skozi leta, praktično niso spreminjali. Sam sem pričakoval večjo porast v času krize in pa izboljšanje v zanjih letih. Za ključno pa bi proglasil ugotovitev o močni, skoraj linearni povezanosti socialne ogroženosti z Ginijevim koeficientom.
+
+
+
+
+
+
+
+
+
 

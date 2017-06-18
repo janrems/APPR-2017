@@ -44,7 +44,7 @@ eu_starost_po <- inner_join(tabela_po_transferjih,tabela_prebivalci) %>%
 #### Zdruzeni tabeli
 starost_zdruzeni <- inner_join(eu_starost_pred %>% rename(delez.pred = Delez), eu_starost_po %>% rename(delez.po = Delez)) %>%
   transmute(Starost, delez.pred, delez.po, razlika = delez.pred-delez.po)
-colnames(starost_zdruzeni)[c(2:4)] <- c("Delez pred transferji", "Delez po transferjih", "Razlika")
+colnames(starost_zdruzeni)[c(2:4)] <- c("Delež pred transferji", "Delež po transferjih", "Razlika")
 
 ## Podatki ločeno po državah, gledano za povprečje let
 
@@ -133,9 +133,9 @@ graf_najboljsi <- ggplot(data = najboljse_drzave) +
   aes(x = Drzava, y = Delez)+ 
   geom_bar(stat="identity",fill ="cornflowerblue") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
-  xlab("Drzava") + 
-  ylab("Razlika delezov") +
-  ggtitle("Zmanjsanje deleza socialno ogrozenih preko socialnih transferjev")
+  xlab("Država") + 
+  ylab("Razlika deležov") +
+  ggtitle("Zmanjšanje deleža socialno ogroženih preko socialnih transferjev")
 
   
 ## Graf razlike socialne ogrozenosti med spoloma
@@ -149,9 +149,10 @@ graf_spol <- skupaj_pred %>%
   ggplot(aes(x = Drzava, y = Delez, fill = Spol)) + 
   geom_bar(stat = "identity", position = "dodge") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
-  xlab("Drzava") + 
-  ylab("Delez socialno ogroženih pred transferji") +
-  ggtitle("Razlika med socialno ogroženostjo moskih in zensk pred transferji")
+  xlab("Država") + 
+  ylab("Delež socialno ogroženih pred transferji") +
+  ggtitle("Razlika med socialno ogroženostjo moških in žensk pred transferji") +
+  guides(fill=guide_legend(title="Spol"))
 
 
 ## Graf socialnega stanja na Irskem skozi leta
@@ -170,12 +171,14 @@ graf_irska <- ggplot(data = irska, aes(x = Leto, y = Delez, fill = Kategorija)) 
   geom_bar(stat = "identity", position = "dodge")
 
 graf_irska <- graf_irska + xlab("Leto") + 
-  ylab("Delez") +
+  ylab("Delež") +
   ggtitle("Socialna ogroženost in uspešnost socialne politike na Irskem med leti 2007-2015")
 
 irska.po.povp <- tabela_po_transferjih %>%
   filter(Starost == "Skupaj", Spol == "Skupaj", Drzava == "Ireland") %>%
   summarise(mean(Delez))
+
+
 #Zemljevid socialne ogrozenosti pred transferji po drzavah
 
 pred_for_map <- inner_join(drzave_pred, tabela_id)
@@ -190,9 +193,39 @@ evropa <- uvozi.zemljevid("http://www.naturalearthdata.com/http//www.naturaleart
 pred_for_map1 <- left_join(evropa, pred_for_map, by = c("iso_a2" = "ID"))
 
 
+ditch_the_axes <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank()
+)
+
+
 zem_e <-ggplot() +
   geom_polygon(data = pred_for_map1, aes(x = long, y = lat, group = group, fill = Delez)) +
-  coord_map(xlim = c(-25,40), ylim = c(32,72))
+  coord_map(xlim = c(-25,40), ylim = c(32,72)) +
+  ditch_the_axes
+  
+
+po_for_map <- inner_join(drzave_po, tabela_id)
+
+po_for_map1 <- left_join(evropa, po_for_map, by = c("iso_a2" = "ID"))
+
+ditch_the_axes <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank()
+)
+
+zem_e_po <- ggplot() +
+  geom_polygon(data = po_for_map1, aes(x = long, y = lat, group = group, fill = Delez)) +
+  coord_map(xlim = c(-25,40), ylim = c(32,72)) +
+  ditch_the_axes
 
 
 ##Ti podatki so se izkazali za dokaj neuporabne

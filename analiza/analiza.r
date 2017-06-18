@@ -93,6 +93,6 @@ matrika_odnosov <- cbind(stolpci, modeli)
 matrika_odnosov <- matrika_odnosov[c("y","x",3,2,1,4)]
 colnames(matrika_odnosov) <- c("Delez ogrozenih", "Spremenljivka", "Kvadratni clen", "Linearni clen", "Prosti clen", "Residual")
 
-korealcija <- apply(stolpci, 1, . %>% {
-  cor(skupna$.[1], skupna$.[2])
+korelacija <- apply(stolpci, 1, . %>% {
+  cor(skupna[[.[1]]], skupna[[.[2]]])
 })
