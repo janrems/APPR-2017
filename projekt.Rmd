@@ -93,8 +93,8 @@ Podatke sem našel na straneh :
 
 
 ```{r razpredelnice1,message=FALSE, echo=FALSE}
-colnames(tabela_pred_transferji)[c(2,5)] = c("Država", "Delež")
-kable(head(tabela_pred_transferji), caption = "Delež socialno ogroženih pred transferji")
+
+kable(head(tabela_pred_transferji), caption = "Delez socialno ogrozenih pred transferji")
 
 kable(head(tabela_gini), caption = "Ginijev koeficient")
 
@@ -113,7 +113,7 @@ Tretjo fazo projekta sem začel z hitro analizo, da bi dobil boljši pregled nad
 Nato sem se posvetil analizi starostne stukture socialno ogroženih. Ponovno sem podatke analiziral za celotno Evropo in prišel do naslednjih spoznanj:
 
 ```{r razpredelnice2,message=FALSE, echo=FALSE}
-kable(head(starost_zdruzeni), caption = "Starostna struktura socialno ogorženih v Evropi")
+kable(head(starost_zdruzeni), caption = "Starostna struktura socialno ogorzenih v Evropi")
 
 ```
 
@@ -172,11 +172,10 @@ Pri naprednejši analizi podatkov sem se odločil analizirati odvisnost socialne
 Odvisnost zgoraj omenjenih dejavnikov s socialno ogroženostjo sem se odločil upodobiti na grafu, zraven pa sem določil še funkcijsko povezavo med podatki, odstopanja od le-te in korealcijski koeficent.
 
 ```{r shiny, echo = FALSE}
-    shinyAppDir("shiny", options=list(width="100%", height=600))
+    shinyAppDir("shiny", options=list(width="100%", height=750))
 ```
 
-<br>
-<br>
+
 
 Tekom analize sem prišel do sklepa, da je delez socialno ogorženih v določeni državi, tako pred, kot tudi po socialnih transferjih, najbolj odvisen od Ginijevega koeficienta. Sploh v povezavi z ogroženostjo po transferjih, kjer je korelacijski koeficient blizu 1. Na sploh so odvisnosti večje, če vzamemo podatke o ogorženosti po socialnih transferjih, torej glavnih dejavnikov za primarno količino ogroženih, se pravi pred transferji, nisem uspel identificirati. Nekoliko, me je presenetila relativno nizka odvisnost deleža ogroženih po transferjih in pa deleža BDP-ja namenjenega le-tem, saj sem pred analizo intuitivno mislil, da sta ravno ta dejavnika natesneje povezana. Poleg tega pa sem ugotovil še, da je dvisnost socialne ogroženosti oz. če želite socialne varnosti, od BDP-ja na prebivalca je, zmerna, a še daleč ne tako pomembna, kot bi nekateri radi prikazali.
 

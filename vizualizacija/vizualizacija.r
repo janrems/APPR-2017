@@ -130,7 +130,7 @@ razlika.spol.pov <- mean(razlika_mz_pred$Delez)
 
 ## Graf prikazuje za koliko drzave zmanjsajo delez socialno ogrozenih
 graf_najboljsi <- ggplot(data = najboljse_drzave) + 
-  aes(x = Drzava, y = Delez)+ 
+  aes(x = reorder(Drzava, -Delez), y = Delez)+ 
   geom_bar(stat="identity",fill ="cornflowerblue") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
   xlab("Država") + 
@@ -146,7 +146,7 @@ skupaj_pred <- rbind(moski_pred %>% mutate(Spol = "M"),
 primerjava <- inner_join(moski_pred,zenske_pred)
   
 graf_spol <- skupaj_pred %>%
-  ggplot(aes(x = Drzava, y = Delez, fill = Spol)) + 
+  ggplot(aes(x = reorder(Drzava,-Delez, sum), y = Delez, fill = Spol)) + 
   geom_bar(stat = "identity", position = "dodge") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
   xlab("Država") + 

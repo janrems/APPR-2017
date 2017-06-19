@@ -36,7 +36,7 @@ levels(tabela_pred_transferji$Spol) <- c("Zenske", "Moski","Skupaj")
 levels(tabela_pred_transferji$Starost) <- c("Nad 65 let", "Od 18 do 64 let", "Pod 18 let","Skupaj")
 levels(tabela_pred_transferji$Drzava)[12] <- "Germany"
 levels(tabela_pred_transferji$Drzava)[10] <- "Macedonia"
-  
+
 
 # Uvoz tabele po transferjih
 
